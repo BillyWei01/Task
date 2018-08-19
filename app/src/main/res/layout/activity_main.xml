@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#fff"
+    android:orientation="vertical"
+    android:paddingLeft="20dp">
+
+    <Button
+        android:id="@+id/loading_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="@string/loading_test"
+        android:textAllCaps="false"
+        android:textSize="30sp" />
+
+
+    <Button
+        android:id="@+id/counting_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="@string/counting_test"
+        android:textAllCaps="false"
+        android:textSize="30sp" />
+
+    <Button
+        android:id="@+id/serial_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="@string/serial_test"
+        android:textAllCaps="false"
+        android:textSize="30sp" />
+
+    <Button
+        android:id="@+id/concurrent_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="@string/concurrent_test"
+        android:textAllCaps="false"
+        android:textSize="30sp" />
+
+
+</LinearLayout>

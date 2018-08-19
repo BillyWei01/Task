@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">TaskDemo</string>
+    <string name="next">NEXT</string>
+    <string name="counting">counting</string>
+    <string name="loading_test">loading test</string>
+    <string name="counting_test">counting test</string>
+    <string name="concurrent_test">concurrent test</string>
+    <string name="stand_by">stand by</string>
+    <string name="task_finish">0 task finish</string>
+    <string name="use_time">use time: 0ms</string>
+    <string name="running">running</string>
+    <string name="serial_test">serial test</string>
+    <string name="ready">ready</string>
+</resources>
