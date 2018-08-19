@@ -1,7 +1,7 @@
 
 # Task
-A thread framework written in Kotlin.
-Include a multipurpose executor family and an extension of AsyncTask.
+A thread scheduler framework.
+
 
 ## feature
 1. Support priority；
