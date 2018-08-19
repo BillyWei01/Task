@@ -13,12 +13,22 @@ Include a multipurpose executor family and an extension of AsyncTask.
 
 # How to Use
 
-## 1、dispatch events
+At first, init logger
+```kotlin
+LogProxy.init(object : TaskLogger {
+    override val isDebug: Boolean
+        get() = BuildConfig.DEBUG
+
+    override fun e(tag: String, e: Throwable) {
+        Log.e(tag, e.message, e)
+    }
+})
+```
+
+If you need lifecycle support, notify events when Activity/Fragment lifecycle change.
 
 ```kotlin
 abstract class BaseActivity : Activity() {
-    protected val tag = this.javaClass.simpleName!!
-
     override fun onDestroy() {
         super.onDestroy()
         LifecycleManager.notify(this, Event.DESTROY)
@@ -36,20 +46,18 @@ abstract class BaseActivity : Activity() {
 }
 ```
 
-## 2、init logger
-```kotlin
-LogProxy.init(object : TaskLogger {
-    override val isDebug: Boolean
-        get() = BuildConfig.DEBUG
 
-    override fun e(tag: String, e: Throwable) {
-        Log.e(tag, e.message, e)
-    }
-})
+There's several ways to use:
+
+## 1、Just run jobs with executor
+```kotlin
+TaskCenter.io.execute{
+    // do something
+}
 ```
 
 
-## 3、Use case: just like AsyncTask, but more contral
+## 2、 Use like AsyncTask, but more contral
 ```kotlin
 class TestActivity : BaseActivity() {
     private lateinit var mCountingTv: TextView
@@ -96,11 +104,19 @@ class TestActivity : BaseActivity() {
 }
 ```
 
-## 4、It's ok to run jobs with executor
+## 3、Use to RxJava
 ```kotlin
-TaskCenter.io.execute{
-    // do something
+object TaskSchedulers {
+    val io: Scheduler by lazy { Schedulers.from(TaskCenter.io) }
+    val computation: Scheduler by lazy { Schedulers.from(TaskCenter.computation) }
+    val single by lazy { Schedulers.from(PipeExecutor(1)) }
 }
+```
+
+```kotlin
+Observable.range(1, 8)
+       .subscribeOn(TaskSchedulers.computation)
+       .subscribe { Log.d(tag, "number:$it") }
 ```
 
 # License
