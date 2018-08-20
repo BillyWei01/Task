@@ -1,6 +1,8 @@
 
 # Task
-A thread scheduler framework.
+[ ![Download](https://api.bintray.com/packages/horizon757/maven/Task/images/download.svg) ](https://bintray.com/horizon757/maven/Task/_latestVersion)
+
+Task is a thread scheduler framework.
 
 
 ## feature
@@ -11,7 +13,16 @@ A thread scheduler framework.
 4. More control of task schedule.
 
 
-# How to Use
+# Download
+```gradle
+repositories {
+    jcenter()
+}
+
+dependencies {
+    implementation 'com.horizon.task:task:1.0.1'
+}
+```
 
 At first, init logger
 ```kotlin
