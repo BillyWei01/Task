@@ -2,7 +2,7 @@
 # Task
 [ ![Download](https://api.bintray.com/packages/horizon757/maven/Task/images/download.svg) ](https://bintray.com/horizon757/maven/Task/_latestVersion)
 
-Task is a thread scheduler framework.
+Task is a thread scheduling framework.
 
 
 ## feature
