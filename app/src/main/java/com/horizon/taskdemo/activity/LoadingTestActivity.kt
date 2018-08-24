@@ -21,7 +21,7 @@ class LoadingTestActivity : BaseActivity() {
         mTestIv = findViewById(R.id.test_iv)
 
         val url = "https://pic1.zhimg.com/80/63536f2f01409f750162828a980a0380_hd.jpg"
-        LoadingTask().setHost(this).execute(url)
+        LoadingTask().host(this).execute(url)
     }
 
     private inner class LoadingTask : IOTask<String, Void, Bitmap>() {

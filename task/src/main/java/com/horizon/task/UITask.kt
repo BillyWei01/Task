@@ -35,7 +35,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 /**
  * base on [android.os.AsyncTask], with some extend.
  * 1. Support priority
- * 2. Cancel task when Activity/Fragment destroy（need to call [setHost])
+ * 2. Cancel task when Activity/Fragment destroy（need to call [host])
  * 3. Auto change priority when Activity/Fragment switch visible/invisible.
  * 4. More control abilities with support of [TaskExecutor]
  */
@@ -259,7 +259,7 @@ abstract class UITask<Params, Progress, Result> : Listener {
      * @return task itself
      * @see Priority
      */
-    fun setPriority(priority: Int): UITask<Params, Progress, Result> {
+    fun priority(priority: Int): UITask<Params, Progress, Result> {
         var p = priority
         if (priority != Priority.IMMEDIATE) {
             if (priority > Priority.HIGH) {
@@ -284,11 +284,11 @@ abstract class UITask<Params, Progress, Result> : Listener {
      * @param host may be one of Activity, Fragment or Dialog
      * @see LifecycleManager.register
      */
-    fun setHost(host: Any): UITask<Params, Progress, Result> {
-        return setHostHash(System.identityHashCode(host))
+    fun host(host: Any): UITask<Params, Progress, Result> {
+        return hostHash(System.identityHashCode(host))
     }
 
-    fun setHostHash(hostHash: Int): UITask<Params, Progress, Result> {
+    fun hostHash(hostHash: Int): UITask<Params, Progress, Result> {
         this.mHostHash = hostHash
         LifecycleManager.register(hostHash, this)
         return this

@@ -4,7 +4,7 @@ import com.horizon.task.UITask
 import com.horizon.task.executor.PipeExecutor
 
 /**
- * Custom PriorityQueue for [PipeExecutor.tasks]<
+ * Custom PriorityQueue for [PipeExecutor.tasks]
  *
  * We have tried to use [java.util.PriorityQueue],
  * but failed in [java.util.PriorityQueue.remove] .
@@ -22,7 +22,7 @@ import com.horizon.task.executor.PipeExecutor
  *
  * @see PipeExecutor
  * @see Priority
- * @see UITask.setPriority
+ * @see UITask.priority
  * @see UITask.onEvent
  */
 internal class PriorityQueue<E> {

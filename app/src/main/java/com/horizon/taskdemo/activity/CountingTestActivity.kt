@@ -19,8 +19,8 @@ class CountingTestActivity : BaseActivity() {
         mCountingTv = findViewById(R.id.counting_tv)
 
         CountingTask()
-                .setHost(this)
-                .setPriority(Priority.IMMEDIATE)
+                .host(this)
+                .priority(Priority.IMMEDIATE)
                 .execute(20 as Integer)
     }
 

@@ -65,7 +65,7 @@ class ConcurrentTestActivity : BaseActivity() {
                         + "\nfinish count:" + mCount
                         + "\nexpectedCount: " + mExpectedCount)
             }
-        }.setHost(this).execute()
+        }.host(this).execute()
 
     }
 
@@ -99,7 +99,7 @@ class ConcurrentTestActivity : BaseActivity() {
                 override fun onPostExecute(result: Void?) {
                     mProgressTv.text = (++mCount).toString() + " task finish"
                 }
-            }.setHost(this).execute()
+            }.host(this).execute()
         }
 
         try {
