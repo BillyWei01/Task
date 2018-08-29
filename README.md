@@ -20,7 +20,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.horizon.task:task:1.0.1'
+    implementation 'com.horizon.task:task:1.0.2'
 }
 ```
 
