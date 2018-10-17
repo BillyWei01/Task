@@ -33,7 +33,7 @@ open class PipeExecutor @JvmOverloads constructor(
             rejectedHandler.rejectedExecution(r, TaskCenter.poolExecutor)
         }
         val active = PriorityRunnable(r, tag, finish)
-        if (count < windowSize || (windowSize > 1 && priority == Priority.IMMEDIATE)) {
+        if (count < windowSize || priority == Priority.IMMEDIATE) {
             startTask(active)
         } else {
             tasks.offer(active, priority)
@@ -61,7 +61,7 @@ open class PipeExecutor @JvmOverloads constructor(
     }
 
     @Synchronized
-    private fun scheduleNext() {
+    override fun scheduleNext(tag: String) {
         count--
         if (count < windowSize) {
             startTask(tasks.poll())
@@ -84,7 +84,7 @@ open class PipeExecutor @JvmOverloads constructor(
             try {
                 r.run()
             } finally {
-                scheduleNext()
+                scheduleNext(tag)
                 if(!tag.isEmpty()){
                     finish(tag)
                 }

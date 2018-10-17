@@ -27,18 +27,21 @@ class LaneExecutor(private val executor: PipeExecutor, private val limit: Boolea
     private class TaskWrapper(val r: Runnable, val priority: Int)
 
     private val finishCallback: (tag: String) -> Unit = { tag ->
-        synchronized(LaneExecutor@ this) {
-            scheduledTasks.remove(tag)
-            if (limit) {
-                waitingTasks.remove(tag)?.let { start(it.r, tag, it.priority) }
-            } else {
-                waitingQueues[tag]?.let {
-                    val wrapper = it.poll()
-                    if (wrapper == null) {
-                        waitingQueues.remove(tag)
-                    } else {
-                        start(wrapper.r, tag, wrapper.priority)
-                    }
+        scheduleNext(tag)
+    }
+
+    @Synchronized
+    override fun scheduleNext(tag: String) {
+        scheduledTasks.remove(tag)
+        if (limit) {
+            waitingTasks.remove(tag)?.let { start(it.r, tag, it.priority) }
+        } else {
+            waitingQueues[tag]?.let {
+                val wrapper = it.poll()
+                if (wrapper == null) {
+                    waitingQueues.remove(tag)
+                } else {
+                    start(wrapper.r, tag, wrapper.priority)
                 }
             }
         }

@@ -2,8 +2,8 @@ package com.horizon.taskdemo.base
 
 import android.app.Activity
 import android.content.Intent
+import com.horizon.task.lifecycle.LifeEvent
 
-import com.horizon.task.lifecycle.Event
 import com.horizon.task.lifecycle.LifecycleManager
 
 abstract class BaseActivity : Activity() {
@@ -11,17 +11,17 @@ abstract class BaseActivity : Activity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        LifecycleManager.notify(this, Event.DESTROY)
+        LifecycleManager.notify(this, LifeEvent.DESTROY)
     }
 
     override fun onPause() {
         super.onPause()
-        LifecycleManager.notify(this, Event.HIDE)
+        LifecycleManager.notify(this, LifeEvent.HIDE)
     }
 
     override fun onResume() {
         super.onResume()
-        LifecycleManager.notify(this, Event.SHOW)
+        LifecycleManager.notify(this, LifeEvent.SHOW)
     }
 
     fun startActivity(activityClazz: Class<*>) {

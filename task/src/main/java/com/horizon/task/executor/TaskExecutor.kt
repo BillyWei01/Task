@@ -8,4 +8,5 @@ interface TaskExecutor : Executor{
      fun execute(r: Runnable, tag: String, priority: Int = Priority.NORMAL,
                 finish: (tag: String) -> Unit = {})
      fun changePriority(r: Runnable, priority: Int, increment: Int): Int
+     fun scheduleNext(tag: String)
 }

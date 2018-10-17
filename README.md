@@ -20,7 +20,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.horizon.task:task:1.0.2'
+    implementation 'com.horizon.task:task:1.0.3'
 }
 ```
 
@@ -42,17 +42,17 @@ If you need lifecycle support, notify events when Activity/Fragment lifecycle ch
 abstract class BaseActivity : Activity() {
     override fun onDestroy() {
         super.onDestroy()
-        LifecycleManager.notify(this, Event.DESTROY)
+        LifecycleManager.notify(this, LifeEvent.DESTROY)
     }
 
     override fun onPause() {
         super.onPause()
-        LifecycleManager.notify(this, Event.HIDE)
+        LifecycleManager.notify(this, LifeEvent.HIDE)
     }
 
     override fun onResume() {
         super.onResume()
-        LifecycleManager.notify(this, Event.SHOW)
+        LifecycleManager.notify(this, LifeEvent.SHOW)
     }
 }
 ```

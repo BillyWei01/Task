@@ -4,10 +4,10 @@ import java.lang.ref.WeakReference
 import java.util.*
 
 internal class Holder {
-    private val listeners = LinkedList<WeakReference<Listener>>()
+    private val listeners = LinkedList<WeakReference<LifeListener>>()
     private var hidden = false
 
-    fun add(listener: Listener) {
+    fun add(listener: LifeListener) {
         var contain = false
         for (reference in listeners) {
             if (reference.get() === listener) {
@@ -20,7 +20,7 @@ internal class Holder {
         }
     }
 
-    fun remove(listener: Listener) {
+    fun remove(listener: LifeListener) {
         val iterator = listeners.iterator()
         while (iterator.hasNext()) {
             val reference = iterator.next()
@@ -32,14 +32,14 @@ internal class Holder {
     }
 
     fun notify(event: Int) {
-        if (event == Event.DESTROY) {
+        if (event == LifeEvent.DESTROY) {
             dispatch(event)
-        } else if (event == Event.SHOW) {
+        } else if (event == LifeEvent.SHOW) {
             if (hidden) {
                 hidden = false
                 dispatch(event)
             }
-        } else if (event == Event.HIDE) {
+        } else if (event == LifeEvent.HIDE) {
             if (!hidden) {
                 hidden = true
                 dispatch(event)

@@ -14,7 +14,7 @@ object LifecycleManager {
      */
     @JvmStatic
     @Synchronized
-    fun register(hostHash: Int, listener: Listener?) {
+    fun register(hostHash: Int, listener: LifeListener?) {
         if (hostHash == 0 || listener == null) {
             return
         }
@@ -28,7 +28,7 @@ object LifecycleManager {
 
     @JvmStatic
     @Synchronized
-    fun unregister(hostHash: Int, listener: Listener?) {
+    fun unregister(hostHash: Int, listener: LifeListener?) {
         if (hostHash == 0 || listener == null) {
             return
         }
@@ -45,7 +45,7 @@ object LifecycleManager {
         val index = holders.indexOfKey(hostHash)
         if (index >= 0) {
             val holder = holders.valueAt(index)
-            if (event == Event.DESTROY) {
+            if (event == LifeEvent.DESTROY) {
                 holders.removeAt(index)
             }
             holder.notify(event)

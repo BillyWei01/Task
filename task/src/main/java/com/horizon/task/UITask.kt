@@ -1,19 +1,3 @@
-/*
- * Copyright (C) 2008 The Android Open Source Project
- * Copyright (C) 2018 Horizon
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 
 package com.horizon.task
 
@@ -26,9 +10,9 @@ import android.util.Log
 import com.horizon.task.base.LogProxy
 import com.horizon.task.base.Priority
 import com.horizon.task.executor.TaskExecutor
-import com.horizon.task.lifecycle.Event
+import com.horizon.task.lifecycle.LifeEvent
 import com.horizon.task.lifecycle.LifecycleManager
-import com.horizon.task.lifecycle.Listener
+import com.horizon.task.lifecycle.LifeListener
 import java.util.concurrent.*
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -39,7 +23,7 @@ import java.util.concurrent.atomic.AtomicBoolean
  * 3. Auto change priority when Activity/Fragment switch visible/invisible.
  * 4. More control abilities with support of [TaskExecutor]
  */
-abstract class UITask<Params, Progress, Result> : Listener {
+abstract class UITask<Params, Progress, Result> : LifeListener {
     private val mWorker: WorkerRunnable<Params, Result>
     private val mFuture: FutureTask<Result>
 
@@ -200,7 +184,9 @@ abstract class UITask<Params, Progress, Result> : Listener {
     }
 
     private fun finish(result: Result?) {
-        onTaskFinish()
+        if(!mTaskInvoked.get()){
+            executor.scheduleNext(mTag)
+        }
         detachHost()
         if (isCancelled) {
             logResult("cancel")
@@ -248,14 +234,7 @@ abstract class UITask<Params, Progress, Result> : Listener {
     }
 
     /**
-     * call after doInBackground,  before onPostExecute or onCancelled
-     */
-    @MainThread
-    protected open fun onTaskFinish() {
-    }
-
-    /**
-     * @param priority of task, default is [Priority.NORMAL]. <br></br>
+     * @param priority of task, default is [Priority.NORMAL].
      * @return task itself
      * @see Priority
      */
@@ -301,15 +280,15 @@ abstract class UITask<Params, Progress, Result> : Listener {
     }
 
     override fun onEvent(event: Int) {
-        if (event == Event.DESTROY) {
+        if (event == LifeEvent.DESTROY) {
             if (!isCancelled && status != Status.FINISHED) {
                 // no need to call detachHost for host destroy
                 mHostHash = 0
                 cancel(true)
             }
-        } else if (event == Event.SHOW) {
+        } else if (event == LifeEvent.SHOW) {
             changePriority(+1)
-        } else if (event == Event.HIDE) {
+        } else if (event == LifeEvent.HIDE) {
             changePriority(-1)
         }
     }

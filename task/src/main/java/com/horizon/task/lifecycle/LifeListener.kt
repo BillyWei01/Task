@@ -1,5 +1,5 @@
 package com.horizon.task.lifecycle
 
-interface Listener {
+interface LifeListener {
     fun onEvent(event: Int)
 }
