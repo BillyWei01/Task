@@ -4,34 +4,16 @@
     android:layout_height="match_parent"
     android:background="#fff"
     android:orientation="vertical"
-    android:paddingLeft="20dp"
     android:paddingTop="20dp">
-
-    <TextView
-        android:id="@+id/progess_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:text="@string/task_finish"
-        android:textColor="#000"
-        android:textSize="30sp" />
 
 
     <TextView
         android:id="@+id/state_tv"
+        android:layout_marginLeft="30dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:text="@string/running"
-        android:textColor="#000"
-        android:textSize="30sp" />
-
-
-    <TextView
-        android:id="@+id/result_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
         android:textColor="#000"
         android:textSize="30sp" />
 

@@ -19,20 +19,19 @@ object TaskCenter {
     }
 
     internal val poolExecutor: ThreadPoolExecutor = ThreadPoolExecutor(
-            0, Integer.MAX_VALUE,
+            2, 256,
             60L, TimeUnit.SECONDS,
             SynchronousQueue(),
             threadFactory)
 
-    // standard Executor
     val io = PipeExecutor(16, 512)
-    val computation = PipeExecutor(Math.min(Math.max(2, cpuCount), 6), 256)
+    val computation = PipeExecutor(Math.min(Math.max(2, cpuCount), 4), 256)
 
-    // use to execute tasks which need to run in serial,
-    // such as writing logs, reporting app info to server ...
-    val lane = LaneExecutor(PipeExecutor(Math.min(Math.max(2, cpuCount), 4), 512))
-
-    // use to execute general tasks，such as loading data.
+    // 带去重策略的 Executor，可用于数据刷新等任务
     val laneIO = LaneExecutor(io, true)
     val laneCP = LaneExecutor(computation, true)
+
+    // 相同的tag的任务会被串行执行，相当于串行的Executor
+    // 可用于写日志，上报app信息等任务
+    val serial = LaneExecutor(PipeExecutor(Math.min(Math.max(2, cpuCount), 4), 1024))
 }

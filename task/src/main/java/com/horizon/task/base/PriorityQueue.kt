@@ -12,8 +12,9 @@ import com.horizon.task.executor.PipeExecutor
  * Elements in queue my be [PipeExecutor.PriorityRunnable], which is a wrapper of runnable,
  * and we need to find element by runnable,
  * it return false when compare object with element like 'o.equals(queue[0])'.
- * If compare like 'queue[0].equals(o)', it will return true, for we have override equals(other).
-
+ * It will return true if compare like 'queue[0].equals(o)'，
+ * for we have override PriorityRunnable's equals(other).
+ *
  * So we make this custom PriorityQueue.
  *
  * Tasks offer to queue may be [Priority.HIGH] , [Priority.NORMAL], [Priority.LOW],

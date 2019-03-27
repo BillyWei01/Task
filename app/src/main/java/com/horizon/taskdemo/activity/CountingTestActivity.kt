@@ -3,7 +3,7 @@ package com.horizon.taskdemo.activity
 import android.os.Bundle
 import android.util.Log
 import android.widget.TextView
-import com.horizon.task.IOTask
+import com.horizon.task.UITask
 import com.horizon.task.base.Priority
 import com.horizon.taskdemo.R
 import com.horizon.taskdemo.base.BaseActivity
@@ -24,7 +24,7 @@ class CountingTestActivity : BaseActivity() {
                 .execute(20 as Integer)
     }
 
-    private inner class CountingTask : IOTask<Integer, String, String>(){
+    private inner class CountingTask : UITask<Integer, String, String>(){
         override fun doInBackground(vararg params: Integer): String? {
             val n = params[0] as Int
             return try {

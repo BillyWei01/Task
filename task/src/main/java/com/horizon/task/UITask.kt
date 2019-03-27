@@ -17,11 +17,14 @@ import java.util.concurrent.*
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
- * base on [android.os.AsyncTask], with some extend.
- * 1. Support priority
- * 2. Cancel task when Activity/Fragment destroy（need to call [host])
- * 3. Auto change priority when Activity/Fragment switch visible/invisible.
- * 4. More control abilities with support of [TaskExecutor]
+ * 基于[android.os.AsyncTask], 做了一些扩展。
+ * 使用方法和[android.os.AsyncTask]基本相同，部分特性有差异，支持更多的特性。
+ *
+ * 1. 支持优先级；
+ * 2. 随 Activity/Fragment 销毁而自动取消任务（需要设定[host])；
+ * 3. 随 Activity/Fragment 切换 可见/不可见 而自动变更优先级；
+ * 4. 更多的控制能力：限制并发和避免任务重复执行（具体看[executor]的类型和参数）。
+ *
  */
 abstract class UITask<Params, Progress, Result> : LifeListener {
     private val mWorker: WorkerRunnable<Params, Result>
@@ -50,16 +53,15 @@ abstract class UITask<Params, Progress, Result> : LifeListener {
     private val mTag: String by lazy { generateTag() }
 
     /**
-     * Generally, tag a task with full name. <br></br>
-     * Override this method and use some other info to identify the task if necessary.
-     *
-     * @return tag of task
+     * 通常情况下以全类名为任务标签；
+     * 若需要自定义，重写此方法。
      */
     protected open fun generateTag(): String {
         return mFullName
     }
 
-    protected abstract val executor: TaskExecutor
+    protected open val executor: TaskExecutor
+        get() = TaskCenter.laneIO
 
     enum class Status {
         PENDING,
@@ -149,7 +151,7 @@ abstract class UITask<Params, Progress, Result> : LifeListener {
     }
 
     @SafeVarargs
-    protected open fun publishProgress(vararg values: Progress) {
+    open fun publishProgress(vararg values: Progress) {
         if (!isCancelled) {
             HANDLER.post { onProgressUpdate(*values) }
         }
@@ -180,7 +182,7 @@ abstract class UITask<Params, Progress, Result> : LifeListener {
         status = Status.RUNNING
         onPreExecute()
         mWorker.mParams = params
-        executor.execute(mFuture, mTag, mPriority)
+        executor.execute(mTag, mFuture,  mPriority)
     }
 
     private fun finish(result: Result?) {

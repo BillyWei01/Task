@@ -1,9 +1,9 @@
 package com.horizon.task.base
 
 /**
- * Define priority of task. <br></br>
- * Supply four levels: <br></br>
- * IMMEDIATE: task will be execute immediately, <br></br>
+ * Define priority of task.
+ * Supply four levels:
+ * IMMEDIATE: task will be execute immediately,
  * HIGH, NORMAL, LOW: task in high, normal, low priority.
  */
 object Priority {

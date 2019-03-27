@@ -7,17 +7,20 @@ import java.util.concurrent.RejectedExecutionHandler
 import java.util.concurrent.ThreadPoolExecutor
 
 /**
- * Executor to schedule tasks
+ * [PipeExecutor] 主要用于控制任务并发
  *
- * Tasks can assign [Priority], tasks in some priority execute in FIFO order.
+ * PipeExecutor 支持任务优先级，相同优先级的任务按先进先出的顺序执行。
  *
- * [windowSize] control the Executor's concurrency,
- * if [windowSize] = 1, the Executor become a serial poolExecutor.
+ * [windowSize]: 并发窗口，控制同时执行的任务数量；
+ * 若 [windowSize] = 1, 相当于串行执行器。
+ *
+ * [capacity]: 任务容量限制(包括正在执行的任务和缓冲的任务），超过容量会执行[rejectedHandler]，
+ * 若 [capacity] <= 0, 不限制容量。
  */
-open class PipeExecutor @JvmOverloads constructor(
+class PipeExecutor @JvmOverloads constructor(
         windowSize: Int,
         private val capacity: Int = -1,
-        private val rejectedHandler: RejectedExecutionHandler = defaultHandler) : TaskExecutor{
+        private val rejectedHandler: RejectedExecutionHandler = defaultHandler) : TaskExecutor {
 
     private val tasks = PriorityQueue<PriorityRunnable>()
     private val windowSize: Int = if (windowSize > 0) windowSize else 1
@@ -27,12 +30,31 @@ open class PipeExecutor @JvmOverloads constructor(
         val defaultHandler = ThreadPoolExecutor.AbortPolicy()
     }
 
+    override fun execute(r: Runnable) {
+        schedule("", r, Priority.NORMAL)
+    }
+
+    fun execute(r: Runnable, priority: Int) {
+        schedule("", r, priority)
+    }
+
+    // 在PipeExecutor中tag没什么用, 只是为了统一形式，方便 UITask 调用
+    override fun execute(tag: String, r: Runnable, priority: Int) {
+        schedule(tag, r, priority)
+    }
+
+    /**
+     * @param tag
+     * @param r
+     * @param priority
+     * @param finishCallback
+     */
     @Synchronized
-    override fun execute(r: Runnable, tag: String, priority: Int, finish: (tag: String) -> Unit) {
-        if(capacity > 0 && count + tasks.size() >= capacity){
+    internal fun schedule(tag: String, r: Runnable, priority: Int, finishCallback: (tag: String) -> Unit = {}) {
+        if (capacity > 0 && (tasks.size() + count) >= capacity) {
             rejectedHandler.rejectedExecution(r, TaskCenter.poolExecutor)
         }
-        val active = PriorityRunnable(r, tag, finish)
+        val active = PriorityRunnable(r, tag, finishCallback)
         if (count < windowSize || priority == Priority.IMMEDIATE) {
             startTask(active)
         } else {
@@ -40,8 +62,19 @@ open class PipeExecutor @JvmOverloads constructor(
         }
     }
 
-    override fun execute(r: Runnable) {
-        execute(r, "")
+    @Synchronized
+    override fun scheduleNext(tag: String) {
+        count--
+        if (count < windowSize) {
+            startTask(tasks.poll())
+        }
+    }
+
+    private fun startTask(active: Runnable?) {
+        if (active != null) {
+            count++
+            TaskCenter.poolExecutor.execute(active)
+        }
     }
 
     @Synchronized
@@ -60,21 +93,6 @@ open class PipeExecutor @JvmOverloads constructor(
         return priority
     }
 
-    @Synchronized
-    override fun scheduleNext(tag: String) {
-        count--
-        if (count < windowSize) {
-            startTask(tasks.poll())
-        }
-    }
-
-    private fun startTask(active: Runnable?) {
-        if (active != null) {
-            count++
-            TaskCenter.poolExecutor.execute(active)
-        }
-    }
-
     @Suppress("EqualsOrHashCode")
     private inner class PriorityRunnable internal constructor(
             private val r: Runnable,
@@ -84,8 +102,8 @@ open class PipeExecutor @JvmOverloads constructor(
             try {
                 r.run()
             } finally {
-                scheduleNext(tag)
-                if(!tag.isEmpty()){
+                scheduleNext("")
+                if (!tag.isEmpty()) {
                     finish(tag)
                 }
             }

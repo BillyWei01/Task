@@ -20,6 +20,7 @@
         <activity android:name="com.horizon.taskdemo.activity.CountingTestActivity"/>
         <activity android:name="com.horizon.taskdemo.activity.ConcurrentTestActivity"/>
         <activity android:name="com.horizon.taskdemo.activity.SerialTestActivity"/>
+        <activity android:name=".activity.ChainTestActivity" />
     </application>
 
 </manifest>

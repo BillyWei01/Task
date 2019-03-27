@@ -6,6 +6,7 @@ import android.view.View
 import com.horizon.taskdemo.R
 import com.horizon.taskdemo.base.BaseActivity
 import com.horizon.taskdemo.base.TaskSchedulers
+import kotlinx.android.synthetic.main.activity_main.*
 import rx.Observable
 import rx.android.schedulers.AndroidSchedulers
 
@@ -15,10 +16,11 @@ class MainActivity : BaseActivity(), View.OnClickListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        findViewById<View>(R.id.loading_btn).setOnClickListener(this)
-        findViewById<View>(R.id.counting_btn).setOnClickListener(this)
-        findViewById<View>(R.id.serial_btn).setOnClickListener(this)
-        findViewById<View>(R.id.concurrent_btn).setOnClickListener(this)
+        loading_btn.setOnClickListener(this)
+        counting_btn.setOnClickListener(this)
+        serial_btn.setOnClickListener(this)
+        concurrent_btn.setOnClickListener(this)
+        chain_btn.setOnClickListener(this)
 
         Observable.range(1, 8)
                 .flatMap { i ->
@@ -36,6 +38,7 @@ class MainActivity : BaseActivity(), View.OnClickListener {
             R.id.counting_btn -> startActivity(CountingTestActivity::class.java)
             R.id.serial_btn -> startActivity(SerialTestActivity::class.java)
             R.id.concurrent_btn -> startActivity(ConcurrentTestActivity::class.java)
+            R.id.chain_btn -> startActivity(ChainTestActivity::class.java)
         }
     }
 

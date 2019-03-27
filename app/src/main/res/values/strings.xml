@@ -11,4 +11,5 @@
     <string name="running">running</string>
     <string name="serial_test">serial test</string>
     <string name="ready">ready</string>
+    <string name="chain_test">chain test</string>
 </resources>
