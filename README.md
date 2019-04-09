@@ -5,10 +5,10 @@
 Task 可以简单地理解为“加强版的AsyncTask”（其实也不仅仅是AsyncTask）。
 
 ## 特性
-相比AsyncTask，新增了以下特性：
-1、更灵活的并发控制
-2、支持调度优先级
-3、支持任务去重
+相比AsyncTask，新增了以下特性：<br/>
+1、更灵活的并发控制<br/>
+2、支持调度优先级<br/>
+3、支持任务去重<br/>
 4、支持生命周期（onDestroy时取消任务，自动调整优先级）
 
 ## 下载
@@ -103,7 +103,7 @@ UITask和AsyncTask用法是类似的, 只是多了一些API：
 - 可以设置任务优先级
 - 有必要时可以重写generateTag来自定义任务的tag
 
-### 4.2 Executor
+### Executor
 当然，项目中不仅仅是UITask，TaskCenter，以及各种Executor,  都是可以单独使用的。
 比方说只是想简单地执行任务，不需要和UI交互，也可以直接使用Executor：
 ```
@@ -125,7 +125,7 @@ UITask和AsyncTask用法是类似的, 只是多了一些API：
     })
 ```
 
-### 4.3 For RxJava
+### For RxJava
 很多开源项目都设计了API来使用外部的Executor，例如RxJava的话可以这样使用：
 ```kotlin
 object TaskSchedulers {
@@ -143,7 +143,7 @@ Observable.range(1, 8)
 这样使用有一个好处：
 项目自身的任务和第三方库的任务都在一个线程池上执行任务，可复用彼此创建线程。
 
-### 4.4 链式调用
+### 链式调用
 ```kotlin
 override fun onCreate(savedInstanceState: Bundle?) {
     // ...
