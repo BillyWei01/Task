@@ -21,6 +21,8 @@
         <activity android:name="com.horizon.taskdemo.activity.ConcurrentTestActivity"/>
         <activity android:name="com.horizon.taskdemo.activity.SerialTestActivity"/>
         <activity android:name=".activity.ChainTestActivity" />
+        <activity android:name=".activity.ConcurrentTestActivity2" />
+        <activity android:name=".activity.NotChainTestActivity" />
     </application>
 
 </manifest>

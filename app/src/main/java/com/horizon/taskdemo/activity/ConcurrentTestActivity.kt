@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import com.horizon.task.TaskCenter
+import com.horizon.task.executor.PipeExecutor
 import com.horizon.taskdemo.R
 import com.horizon.taskdemo.base.BaseActivity
 import kotlinx.android.synthetic.main.activity_concurrent_test.*
@@ -21,9 +22,26 @@ class ConcurrentTestActivity : BaseActivity() {
         val b = AtomicInteger()
         val c = AtomicInteger()
 
+        TaskCenter.io.execute{
+            // do something
+        }
+
+        TaskCenter.laneIO.execute("laneIO", {
+            // do something
+        })
+
+        val serialExecutor = PipeExecutor(1)
+        serialExecutor.execute{
+            // do something
+        }
+
+        TaskCenter.serial.execute ("your tag", {
+            // do something
+        })
+
         // TaskCenter.io 没做任务去重，所以a=5
         for (i in 1..5) {
-            TaskCenter.computation.execute {
+            TaskCenter.io.execute {
                 Thread.sleep(100)
                 Log.d(tag, "TaskCenter.io")
                 a.incrementAndGet()

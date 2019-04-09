@@ -19,13 +19,14 @@ object TaskCenter {
     }
 
     internal val poolExecutor: ThreadPoolExecutor = ThreadPoolExecutor(
-            2, 256,
+            0, 256,
             60L, TimeUnit.SECONDS,
             SynchronousQueue(),
             threadFactory)
 
-    val io = PipeExecutor(16, 512)
-    val computation = PipeExecutor(Math.min(Math.max(2, cpuCount), 4), 256)
+    // 常规的任务调度器，可控制任务并发，支持任务优先级
+    val io = PipeExecutor(20, 512)
+    val computation = PipeExecutor(Math.min(Math.max(2, cpuCount), 4), 512)
 
     // 带去重策略的 Executor，可用于数据刷新等任务
     val laneIO = LaneExecutor(io, true)

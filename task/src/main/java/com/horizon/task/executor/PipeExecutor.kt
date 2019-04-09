@@ -3,6 +3,7 @@ package com.horizon.task.executor
 import com.horizon.task.TaskCenter
 import com.horizon.task.base.Priority
 import com.horizon.task.base.PriorityQueue
+import java.util.concurrent.RejectedExecutionException
 import java.util.concurrent.RejectedExecutionHandler
 import java.util.concurrent.ThreadPoolExecutor
 
@@ -14,7 +15,7 @@ import java.util.concurrent.ThreadPoolExecutor
  * [windowSize]: 并发窗口，控制同时执行的任务数量；
  * 若 [windowSize] = 1, 相当于串行执行器。
  *
- * [capacity]: 任务容量限制(包括正在执行的任务和缓冲的任务），超过容量会执行[rejectedHandler]，
+ * [capacity]: 任务缓冲区容量，超过容量会执行[rejectedHandler]，
  * 若 [capacity] <= 0, 不限制容量。
  */
 class PipeExecutor @JvmOverloads constructor(
@@ -22,7 +23,7 @@ class PipeExecutor @JvmOverloads constructor(
         private val capacity: Int = -1,
         private val rejectedHandler: RejectedExecutionHandler = defaultHandler) : TaskExecutor {
 
-    private val tasks = PriorityQueue<PriorityRunnable>()
+    private val tasks = PriorityQueue<RunnableWrapper>()
     private val windowSize: Int = if (windowSize > 0) windowSize else 1
     private var count = 0
 
@@ -30,43 +31,41 @@ class PipeExecutor @JvmOverloads constructor(
         val defaultHandler = ThreadPoolExecutor.AbortPolicy()
     }
 
+    private val trigger: Trigger = object : Trigger {
+        override fun next() {
+            scheduleNext()
+        }
+    }
+
     override fun execute(r: Runnable) {
-        schedule("", r, Priority.NORMAL)
+        schedule(RunnableWrapper(r, trigger), Priority.NORMAL)
     }
 
     fun execute(r: Runnable, priority: Int) {
-        schedule("", r, priority)
+        schedule(RunnableWrapper(r, trigger), priority)
     }
 
-    // 在PipeExecutor中tag没什么用, 只是为了统一形式，方便 UITask 调用
-    override fun execute(tag: String, r: Runnable, priority: Int) {
-        schedule(tag, r, priority)
-    }
-
-    /**
-     * @param tag
-     * @param r
-     * @param priority
-     * @param finishCallback
-     */
-    @Synchronized
-    internal fun schedule(tag: String, r: Runnable, priority: Int, finishCallback: (tag: String) -> Unit = {}) {
-        if (capacity > 0 && (tasks.size() + count) >= capacity) {
-            rejectedHandler.rejectedExecution(r, TaskCenter.poolExecutor)
-        }
-        val active = PriorityRunnable(r, tag, finishCallback)
-        if (count < windowSize || priority == Priority.IMMEDIATE) {
-            startTask(active)
-        } else {
-            tasks.offer(active, priority)
-        }
+    fun execute(r: () -> Unit, priority: Int = Priority.NORMAL) {
+        execute(Runnable { r.invoke() }, priority)
     }
 
     @Synchronized
-    override fun scheduleNext(tag: String) {
+    internal fun scheduleNext() {
         count--
         if (count < windowSize) {
             startTask(tasks.poll())
+        }
+    }
+
+    @Synchronized
+    internal fun schedule(r: RunnableWrapper, priority: Int) {
+        if (capacity > 0 && tasks.size() >= capacity) {
+            rejectedHandler.rejectedExecution(r, TaskCenter.poolExecutor)
+        }
+        if (count < windowSize || priority == Priority.IMMEDIATE) {
+            startTask(r)
+        } else {
+            tasks.offer(r, priority)
         }
     }
 
@@ -78,11 +77,6 @@ class PipeExecutor @JvmOverloads constructor(
     }
 
     @Synchronized
-    override fun remove(r: Runnable, priority: Int) {
-        tasks.remove(r, priority)
-    }
-
-    @Synchronized
     override fun changePriority(r: Runnable, priority: Int, increment: Int): Int {
         val active = tasks.remove(r, priority)
         if (active != null) {
@@ -91,26 +85,5 @@ class PipeExecutor @JvmOverloads constructor(
             return newPriority
         }
         return priority
-    }
-
-    @Suppress("EqualsOrHashCode")
-    private inner class PriorityRunnable internal constructor(
-            private val r: Runnable,
-            private val tag: String,
-            private val finish: (tag: String) -> Unit) : Runnable {
-        override fun run() {
-            try {
-                r.run()
-            } finally {
-                scheduleNext("")
-                if (!tag.isEmpty()) {
-                    finish(tag)
-                }
-            }
-        }
-
-        override fun equals(other: Any?): Boolean {
-            return this === other || r === other
-        }
     }
 }

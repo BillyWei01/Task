@@ -1,4 +1,3 @@
-
 package com.horizon.task
 
 import android.os.Handler
@@ -9,6 +8,8 @@ import android.text.TextUtils
 import android.util.Log
 import com.horizon.task.base.LogProxy
 import com.horizon.task.base.Priority
+import com.horizon.task.executor.LaneExecutor
+import com.horizon.task.executor.PipeExecutor
 import com.horizon.task.executor.TaskExecutor
 import com.horizon.task.lifecycle.LifeEvent
 import com.horizon.task.lifecycle.LifecycleManager
@@ -100,6 +101,7 @@ abstract class UITask<Params, Progress, Result> : LifeListener {
                 } catch (e: Throwable) {
                     mCancelled.set(true)
                     LogProxy.e(mSimpleName, e)
+                    // shall we throw e ?
                 }
 
                 if (LogProxy.isDebug) {
@@ -137,7 +139,7 @@ abstract class UITask<Params, Progress, Result> : LifeListener {
     }
 
     private fun postResultIfNotInvoked(result: Result?) {
-        if(mFuture.isCancelled){
+        if (mFuture.isCancelled) {
             mCancelled.set(true)
         }
         val wasTaskInvoked = mTaskInvoked.get()
@@ -158,9 +160,6 @@ abstract class UITask<Params, Progress, Result> : LifeListener {
     }
 
     fun cancel(mayInterruptIfRunning: Boolean): Boolean {
-        if (mPriority != Priority.IMMEDIATE) {
-            executor.remove(mFuture, mPriority)
-        }
         return mFuture.cancel(mayInterruptIfRunning)
     }
 
@@ -182,13 +181,14 @@ abstract class UITask<Params, Progress, Result> : LifeListener {
         status = Status.RUNNING
         onPreExecute()
         mWorker.mParams = params
-        executor.execute(mTag, mFuture,  mPriority)
+        if (executor is LaneExecutor) {
+            (executor as LaneExecutor).execute(mTag, mFuture, mPriority)
+        } else {
+            (executor as PipeExecutor).execute(mFuture, mPriority)
+        }
     }
 
     private fun finish(result: Result?) {
-        if(!mTaskInvoked.get()){
-            executor.scheduleNext(mTag)
-        }
         detachHost()
         if (isCancelled) {
             logResult("cancel")

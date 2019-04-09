@@ -9,11 +9,11 @@ import com.horizon.task.executor.PipeExecutor
  * We have tried to use [java.util.PriorityQueue],
  * but failed in [java.util.PriorityQueue.remove] .
  *
- * Elements in queue my be [PipeExecutor.PriorityRunnable], which is a wrapper of runnable,
+ * Elements in queue my be [com.horizon.task.executor.RunnableWrapper], which is a wrapper of runnable,
  * and we need to find element by runnable,
  * it return false when compare object with element like 'o.equals(queue[0])'.
  * It will return true if compare like 'queue[0].equals(o)'，
- * for we have override PriorityRunnable's equals(other).
+ * cause we have override RunnableWrapper's equals(other).
  *
  * So we make this custom PriorityQueue.
  *

@@ -10,10 +10,11 @@ import com.horizon.taskdemo.base.BaseActivity
 
 class SerialTestActivity : BaseActivity() {
     private var mCountingTv: TextView? = null
-    private val mSerialExecutor = PipeExecutor(1)
     private var destroy = false
     private var count = 0
     private var createTime: Long = 0
+
+    private val mSerialExecutor = PipeExecutor(1)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,6 +23,8 @@ class SerialTestActivity : BaseActivity() {
         mCountingTv = findViewById(R.id.counting_tv)
         createTime = System.nanoTime()
         for (i in 0 until N) {
+            // 两种方式实现串行：TaskCenter.serial更方便一些；PipeExecutor(1)更独立一些
+            // TaskCenter.serial.execute("CountingTask", CountingTask())
             mSerialExecutor.execute(CountingTask())
         }
     }
@@ -38,7 +41,7 @@ class SerialTestActivity : BaseActivity() {
                 }
 
                 val t = (System.nanoTime() - createTime) / 1000000
-                val text = count.toString() + " task finished, \nuse time: " + t
+                val text = "$count task finished, \nuse time: $t"
                 runOnUiThread { mCountingTv!!.text = text }
             }
         }

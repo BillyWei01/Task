@@ -1,5 +1,6 @@
 package com.horizon.taskdemo.activity
 
+import android.os.AsyncTask
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -9,6 +10,7 @@ import com.horizon.taskdemo.base.TaskSchedulers
 import kotlinx.android.synthetic.main.activity_main.*
 import rx.Observable
 import rx.android.schedulers.AndroidSchedulers
+import java.lang.Exception
 
 class MainActivity : BaseActivity(), View.OnClickListener {
 
@@ -38,6 +40,7 @@ class MainActivity : BaseActivity(), View.OnClickListener {
             R.id.counting_btn -> startActivity(CountingTestActivity::class.java)
             R.id.serial_btn -> startActivity(SerialTestActivity::class.java)
             R.id.concurrent_btn -> startActivity(ConcurrentTestActivity::class.java)
+            //R.id.chain_btn -> startActivity(NotChainTestActivity::class.java)
             R.id.chain_btn -> startActivity(ChainTestActivity::class.java)
         }
     }

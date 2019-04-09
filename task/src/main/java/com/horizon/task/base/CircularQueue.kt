@@ -4,7 +4,7 @@ package com.horizon.task.base
  * FIFO queue
  *
  * We have tried to [java.util.LinkedList],
- * failed in [java.util.LinkedList.remove],
+ * failed in java.util.LinkedList.remove(Object o),
  * same reason with [PriorityQueue]
  */
 internal class CircularQueue<E> {
@@ -27,11 +27,9 @@ internal class CircularQueue<E> {
     }
 
     internal fun poll(): E? {
-        if (head == null) {
-            return null
-        }
-        val e = head!!.data
-        head = head!!.next
+        val h: Node<E> = head ?: return null
+        val e = h.data
+        head = h.next
         if (head == null) {
             tail = null
         }
@@ -39,13 +37,11 @@ internal class CircularQueue<E> {
     }
 
     internal fun remove(o: Any): E? {
-        if (head == null) {
-            return null
-        }
-        if (head!!.data == o) {
+        val h: Node<E> = head ?: return null
+        if (h.data == o) {
             return poll()
         }
-        val prev: Node<E> = head!!
+        val prev: Node<E> = h
         var curr: Node<E>? = prev.next
         while (curr != null) {
             if (curr.data == o) {
