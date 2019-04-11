@@ -170,7 +170,10 @@ override fun onCreate(savedInstanceState: Bundle?) {
 }
 ```
 
-# License
+## 相关阅读
+https://www.jianshu.com/p/4dff25a87122
+
+## License
 See the [LICENSE](LICENSE.md) file for license rights and limitations.
 
 
