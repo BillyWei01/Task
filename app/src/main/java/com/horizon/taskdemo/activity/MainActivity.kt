@@ -1,18 +1,18 @@
 package com.horizon.taskdemo.activity
 
-import android.os.AsyncTask
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import com.horizon.taskdemo.R
 import com.horizon.taskdemo.base.BaseActivity
 import com.horizon.taskdemo.base.TaskSchedulers
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.activity_main.*
-import rx.Observable
-import rx.android.schedulers.AndroidSchedulers
-import java.lang.Exception
 
 class MainActivity : BaseActivity(), View.OnClickListener {
+    private var disposable: Disposable? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,14 +24,21 @@ class MainActivity : BaseActivity(), View.OnClickListener {
         concurrent_btn.setOnClickListener(this)
         chain_btn.setOnClickListener(this)
 
-        Observable.range(1, 8)
+        disposable = Observable.range(1, 8)
                 .flatMap { i ->
-                    Observable.just(i).subscribeOn(TaskSchedulers.computation)
-                            .map { Thread.sleep(1050); it * 10 }
-                }.observeOn(AndroidSchedulers.mainThread())
-                .subscribe { number ->
-                    Log.d(tag, "number:" + number!!)
+                    Observable.just(i)
+                            .subscribeOn(TaskSchedulers.computation)
+                            .map { Thread.sleep(1050); "param:$it" }
                 }
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe { result ->
+                    Log.d(tag, result)
+                }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        disposable?.dispose()
     }
 
     override fun onClick(v: View) {
@@ -40,8 +47,8 @@ class MainActivity : BaseActivity(), View.OnClickListener {
             R.id.counting_btn -> startActivity(CountingTestActivity::class.java)
             R.id.serial_btn -> startActivity(SerialTestActivity::class.java)
             R.id.concurrent_btn -> startActivity(ConcurrentTestActivity::class.java)
-            //R.id.chain_btn -> startActivity(NotChainTestActivity::class.java)
             R.id.chain_btn -> startActivity(ChainTestActivity::class.java)
+            //R.id.chain_btn -> startActivity(NotChainTestActivity::class.java)
         }
     }
 
