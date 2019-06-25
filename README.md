@@ -2,25 +2,25 @@
 ## Task
 [ ![Download](https://api.bintray.com/packages/horizon757/maven/Task/images/download.svg) ](https://bintray.com/horizon757/maven/Task/_latestVersion)
 
-Task 加强版异步任务框架 (可以理解为“加强版的AsyncTask”)。
+Task AsyncTask Plus!
 
-## 特性
-相比AsyncTask，新增了以下特性：<br/>
-1、更灵活的并发控制<br/>
-2、支持调度优先级<br/>
-3、支持任务去重<br/>
-4、支持生命周期（onDestroy时取消任务，自动调整优先级）<br/>
-5、支持链式调用
+## New Feature
+1、More flexible concurrency control <br/>
+2、Support Priority <br/>
+3、Support Task grouping <br/>
+4、Support lifecycle<br/>
+5、Support chain invocation
 
-## 下载
+## Download
 ```gradle
 dependencies {
     implementation 'com.horizon.task:task:1.0.4'
 }
 ```
 
-## 用法
-首先，初始化日志接口(可省略，但省略的话就没有日志信息了，包括错误日志）
+## Prepare
+
+1. Initialization
 
 ```kotlin
 LogProxy.init(object : TaskLogger {
@@ -33,7 +33,7 @@ LogProxy.init(object : TaskLogger {
 })
 ```
 
-如果需要生命周期支持,在 Activity/Fragment 生命周期回调中通知事件。
+2. Notify Lifecycle Events
 
 ```kotlin
 abstract class BaseActivity : Activity() {
@@ -54,9 +54,9 @@ abstract class BaseActivity : Activity() {
 }
 ```
 
-然后，具体执行任务，有几种方法：
 
-### 1、常规用法
+## How to use
+### 1、Standard usage
 ```kotlin
     override fun onCreate(savedInstanceState: Bundle?) {
         // ...
@@ -68,7 +68,7 @@ abstract class BaseActivity : Activity() {
 
     private inner class TestTask: UITask<String, Integer, String>(){
         override fun generateTag(): String {
-            // 一般情况下不需要重写这个函数，这里只是为了演示
+            // Normally, you don't need to override this function
             return "custom tag"
         }
 
@@ -100,14 +100,8 @@ abstract class BaseActivity : Activity() {
     }
 ```
 
-UITask和AsyncTask用法是类似的, 只是多了一些API：
-- 因为生命需要观察Activity/Fragment的生命周期，所以需要调用host()，传入当前Activity/Fragment
-- 可以设置任务优先级
-- 有必要时可以重写generateTag来自定义任务的tag
 
 ### 2、Executor
-TaskCenter，以及各种Executor, 都是可以单独使用的。
-比方说只是想简单地执行任务，不需要和UI交互，也可以直接使用Executor：
 
 ```
     TaskCenter.io.execute{
@@ -129,7 +123,6 @@ TaskCenter，以及各种Executor, 都是可以单独使用的。
 ```
 
 ### 3、For RxJava
-很多开源项目都设计了API来使用外部的Executor，例如RxJava的话可以这样使用：
 
 ```kotlin
 object TaskSchedulers {
@@ -138,17 +131,14 @@ object TaskSchedulers {
     val single by lazy { Schedulers.from(PipeExecutor(1)) }
 }
 ```
-使用：
+
 ```kotlin
 Observable.range(1, 8)
        .subscribeOn(TaskSchedulers.computation)
        .subscribe { Log.d(tag, "number:$it") }
 ```
 
-这样使用有一个好处：<br/>
-项目自身的任务和第三方库的任务都在一个线程池上执行任务，可复用彼此创建线程。
-
-### 4、链式调用
+### 4、Chain invocation
 ```kotlin
 override fun onCreate(savedInstanceState: Bundle?) {
     val task = ChainTask<Double, Int, String>()
@@ -174,7 +164,7 @@ override fun onCreate(savedInstanceState: Bundle?) {
 }
 ```
 
-## 相关链接
+## Link
 https://www.jianshu.com/p/8afb6cf64eec
 
 ## License
