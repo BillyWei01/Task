@@ -2,10 +2,10 @@
 ## Task
 [ ![Download](https://api.bintray.com/packages/horizon757/maven/Task/images/download.svg) ](https://bintray.com/horizon757/maven/Task/_latestVersion)
 
-Task AsyncTask Plus!
+AsyncTask Plus
 
 ## New Feature
-1、More flexible concurrency control <br/>
+1、More concurrency control <br/>
 2、Support Priority <br/>
 3、Support Task grouping <br/>
 4、Support lifecycle<br/>
@@ -20,7 +20,7 @@ dependencies {
 
 ## Prepare
 
-1. Initialization
+1. Initialization(optional）
 
 ```kotlin
 LogProxy.init(object : TaskLogger {
@@ -57,6 +57,9 @@ abstract class BaseActivity : Activity() {
 
 ## How to use
 ### 1、Standard usage
+
+Just like AsyncTask:
+
 ```kotlin
     override fun onCreate(savedInstanceState: Bundle?) {
         // ...
