@@ -14,7 +14,7 @@ AsyncTask Plus
 ## Download
 ```gradle
 dependencies {
-    implementation 'com.horizon.task:task:1.0.4'
+    implementation 'com.horizon.task:task:1.0.5'
 }
 ```
 

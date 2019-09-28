@@ -4,7 +4,7 @@ apply plugin: 'org.jetbrains.dokka-android'
 
 def GROUP = 'com.horizon.task'
 def ARTIFACT = 'task'
-def VERSION = '1.0.4'
+def VERSION = '1.0.5'
 
 group = GROUP
 version = VERSION
@@ -16,12 +16,14 @@ dokka{
 }
 
 task javadocJar(type: Jar, dependsOn: dokka) {
-    classifier = 'javadoc'
+    //classifier = 'javadoc'
+    getArchiveClassifier().set('javadoc')
     from dokka.outputDirectory
 }
 
 task sourcesJar(type: Jar) {
-    classifier = 'sources'
+    //classifier = 'sources'
+    getArchiveClassifier().set('sources')
     from android.sourceSets.main.java.srcDirs
 }
 

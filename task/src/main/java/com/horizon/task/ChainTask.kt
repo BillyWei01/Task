@@ -1,6 +1,5 @@
 package com.horizon.task
 
-import android.support.annotation.MainThread
 import com.horizon.task.executor.TaskExecutor
 
 /**
@@ -71,23 +70,19 @@ class ChainTask<Params, Progress, Result>(override val executor: TaskExecutor = 
         return mBackground?.invoke(listOf(*params))
     }
 
-    @MainThread
     override fun onPostExecute(result: Result?) {
         mPostExecute?.invoke(result)
     }
 
-    @MainThread
     override fun onProgressUpdate(vararg values: Progress) {
         mProgressUpdate?.invoke(listOf(*values))
     }
 
-    @MainThread
     override fun onCancelled(result: Result?) {
         mCancelWithResult?.invoke(result)
         onCancelled()
     }
 
-    @MainThread
     override fun onCancelled() {
         mCancel?.invoke()
     }

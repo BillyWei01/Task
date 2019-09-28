@@ -3,7 +3,6 @@ package com.horizon.task
 import android.os.Handler
 import android.os.Looper
 import android.os.Process
-import android.support.annotation.MainThread
 import android.text.TextUtils
 import android.util.Log
 import com.horizon.task.base.LogProxy
@@ -211,27 +210,22 @@ abstract class UITask<Params, Progress, Result> : LifeListener {
         }
     }
 
-    @MainThread
     protected open fun onPreExecute() {
     }
 
     // WorkerThread
     protected abstract fun doInBackground(vararg params: Params): Result?
 
-    @MainThread
     protected open fun onPostExecute(result: Result?) {
     }
 
-    @MainThread
     protected open fun onProgressUpdate(vararg values: Progress) {
     }
 
-    @MainThread
     protected open fun onCancelled(result: Result?) {
         onCancelled()
     }
 
-    @MainThread
     protected open fun onCancelled() {
     }
 
