@@ -1,6 +1,5 @@
 
 ## Task
-[ ![Download](https://api.bintray.com/packages/horizon757/maven/Task/images/download.svg) ](https://bintray.com/horizon757/maven/Task/_latestVersion)
 
 AsyncTask Plus
 
@@ -11,12 +10,7 @@ AsyncTask Plus
 4、Support lifecycle<br/>
 5、Support chain invocation
 
-## Download
-```gradle
-dependencies {
-    implementation 'com.horizon.task:task:1.0.6'
-}
-```
+
 
 ## Prepare
 
@@ -169,6 +163,14 @@ override fun onCreate(savedInstanceState: Bundle?) {
 
 ## Link
 https://www.jianshu.com/p/8afb6cf64eec
+
+## Note
+Task can be more clean. <br>
+But I don't have time to optimize the code.
+
+It's recommended to read [TagExecutor](https://github.com/BillyWei01/Doodle/blob/master/doodle/src/main/java/com/horizon/doodle/executor/TagExecutor.kt) for reference: 
+
+
 
 ## License
 See the [LICENSE](LICENSE.md) file for license rights and limitations.
